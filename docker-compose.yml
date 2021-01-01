@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./db_init:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: albert
+      POSTGRES_DB: albert
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - 5433:5432
