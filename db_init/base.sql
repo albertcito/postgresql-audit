@@ -1,4 +1,4 @@
-CREATE TYPE example_enum AS ENUM('left', 'right')
+CREATE TYPE example_enum AS ENUM('left', 'right');
 CREATE TABLE "lang" (
 	"id" varchar NOT NULL,
 	"name" varchar NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE "lang" (
 	"type" example_enum,
 	CONSTRAINT "UQ_id_lang" UNIQUE ("id"),
 	CONSTRAINT "PK_id_lang" PRIMARY KEY ("id")
-)
+);
 
 /*
 CREATE EXTENSION dblink;

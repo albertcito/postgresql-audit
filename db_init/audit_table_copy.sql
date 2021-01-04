@@ -1,4 +1,3 @@
-DROP FUNCTION audit_table_copy;
 CREATE OR REPLACE FUNCTION audit_table_copy(
 	connname VARCHAR,
     name_schema VARCHAR,
