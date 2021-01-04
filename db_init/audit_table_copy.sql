@@ -1,11 +1,3 @@
-SELECT dblink_connect(
-	'otherdb',
-	'host=127.0.0.1 port=5432 dbname=log user=albert password=1234 options=-csearch_path='
-);
-
-SELECT audit_table_copy('otherdb', 'public', 'lang');
-SELECT * FROM dblink_disconnect('otherdb');
-
 DROP FUNCTION audit_table_copy;
 CREATE OR REPLACE FUNCTION audit_table_copy(
 	connname VARCHAR,

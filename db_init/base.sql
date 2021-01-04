@@ -1,3 +1,4 @@
+CREATE TYPE example_enum AS ENUM('left', 'right')
 CREATE TABLE "lang" (
 	"id" varchar NOT NULL,
 	"name" varchar NOT NULL,
@@ -8,6 +9,17 @@ CREATE TABLE "lang" (
 	"updated_by" integer,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL,
+	"type" example_enum,
 	CONSTRAINT "UQ_id_lang" UNIQUE ("id"),
 	CONSTRAINT "PK_id_lang" PRIMARY KEY ("id")
 )
+
+/*
+CREATE EXTENSION dblink;
+SELECT dblink_connect(
+	'audit_db',
+	'host=127.0.0.1 port=5432 dbname=log user=albert password=1234 options=-csearch_path='
+);
+SELECT audit_table_copy('audit_db', 'public', 'lang');
+SELECT * FROM dblink_disconnect('audit_db');
+*/
