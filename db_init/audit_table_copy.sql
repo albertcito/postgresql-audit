@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION audit_table_copy(
+CREATE OR REPLACE PROCEDURE audit_table_copy(
 	connname VARCHAR,
     name_schema VARCHAR,
     name_table VARCHAR
@@ -16,7 +16,15 @@ BEGIN
 		IF record.data_type = 'USER-DEFINED' THEN
 			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" VARCHAR,');
 		ELSE
-			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" ', record.udt_name, ',');
+			IF record.udt_name = 'varchar' AND record.character_maximum_length IS NOT NULL THEN
+				table_to_create = CONCAT(
+					table_to_create, ' "', record.column_name, '" VARCHAR(', record.character_maximum_length ,'),'
+				);
+			ELSE
+				table_to_create = CONCAT(
+					table_to_create, ' "', record.column_name, '" ', record.udt_name, ','
+				);
+			END IF;
 		END IF;
     END LOOP;
 	table_to_create = RTRIM(table_to_create, ',');
