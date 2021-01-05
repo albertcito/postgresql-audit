@@ -9,9 +9,12 @@ CREATE OR REPLACE FUNCTION audit_table_copy(
 	DECLARE new_table VARCHAR = CONCAT('"', name_schema, '"."', name_table, '"');
 	DECLARE table_to_create VARCHAR = CONCAT('CREATE TABLE IF NOT EXISTS ', new_table, '(');
 BEGIN
+	table_to_create = CONCAT(table_to_create, ' "id_audit_" SERIAL PRIMARY KEY,');
+	table_to_create = CONCAT(table_to_create, ' "event_audit_" VARCHAR,');
+	table_to_create = CONCAT(table_to_create, ' "event_at_audit_" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,');
 	FOR record IN (SELECT * FROM audit_get_table_columns(name_schema, name_table)) LOOP
 		IF record.data_type = 'USER-DEFINED' THEN
-			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" varchar,');
+			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" VARCHAR,');
 		ELSE
 			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" ', record.udt_name, ',');
 		END IF;
