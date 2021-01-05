@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION audit_table_copy(
 	DECLARE table_to_create VARCHAR = CONCAT('CREATE TABLE IF NOT EXISTS ', new_table, '(');
 BEGIN
 	FOR record IN (SELECT * FROM audit_get_table_columns(name_schema, name_table)) LOOP
-		table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" ', record.udt_name, ',');
+		IF record.data_type = 'USER-DEFINED' THEN
+			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" varchar,');
+		ELSE
+			table_to_create = CONCAT(table_to_create, ' "', record.column_name, '" ', record.udt_name, ',');
+		END IF;
     END LOOP;
 	table_to_create = RTRIM(table_to_create, ',');
 	table_to_create = CONCAT(table_to_create, ' );');
