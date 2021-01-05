@@ -7,8 +7,8 @@ CREATE TABLE "lang" (
 	"is_blocked" boolean NOT NULL DEFAULT FALSE,
 	"created_by" integer,
 	"updated_by" integer,
-	"created_at" timestamp NOT NULL,
-	"updated_at" timestamp NOT NULL,
+	"created_at" timestamp,
+	"updated_at" timestamp,
 	"type" example_enum,
 	CONSTRAINT "UQ_id_lang" UNIQUE ("id"),
 	CONSTRAINT "PK_id_lang" PRIMARY KEY ("id")
