@@ -7,11 +7,11 @@ CREATE OR REPLACE FUNCTION audit_table_triggers(
 	DECLARE record RECORD;
 	DECLARE table_schema_name VARCHAR = CONCAT('"', name_schema, '"."', name_table, '"');
 	DECLARE function_name VARCHAR = CONCAT(
-		name_schema, '.', 'audit_', name_schema, '_', name_table, '_trigger()'
+		name_schema, '.', '_audit_', name_schema, '_', name_table, '_trigger()'
 	);
 	DECLARE trigger VARCHAR = CONCAT(
-		' DROP TRIGGER IF EXISTS audit_table ON', table_schema_name, ' ; ',
-		' CREATE TRIGGER audit_table AFTER INSERT OR UPDATE OR DELETE ON',
+		' DROP TRIGGER IF EXISTS _audit_table ON ', table_schema_name, ' ; ',
+		' CREATE TRIGGER _audit_table AFTER INSERT OR UPDATE OR DELETE ON',
 		' ', table_schema_name, ' ',
     	'FOR EACH ROW EXECUTE PROCEDURE ', function_name, '; '
 	);
@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION audit_table_triggers(
 	DECLARE values_new_query VARCHAR = '';
 	DECLARE values_old_query VARCHAR = '';
 	DECLARE function_trigger VARCHAR;
+	DECLARE select_temp_value VARCHAR;
 BEGIN
 
 	function_trigger = CONCAT(
@@ -27,6 +28,7 @@ BEGIN
         ' RETURNS trigger as $$ ',
 		' DECLARE connname VARCHAR = upper(substr(md5(random()::text), 0, 20));',
 		' DECLARE query_insert VARCHAR;',
+		' DECLARE conn_data VARCHAR = ''host=127.0.0.1 port=5432 dbname=log user=albert options=-csearch_path='';',
 		'BEGIN'
 	);
 
@@ -40,29 +42,26 @@ BEGIN
 		function_trigger,
 		' IF TG_OP = ''DELETE'' THEN ',
 			'query_insert = ',
-			''' INSERT INTO ', table_schema_name, ' (', columns_query, 'event_audit_) VALUES (', values_old_query, 'TG_OP); '';'
+			''' INSERT INTO ', table_schema_name, ' (', columns_query, '_audit_type) VALUES (', values_old_query, 'TG_OP); '';'
 		' ELSE ',
 			'query_insert = ',
-			''' INSERT INTO ', table_schema_name, ' (', columns_query, 'event_audit_) VALUES (', values_new_query, 'TG_OP); '';',
+			''' INSERT INTO ', table_schema_name, ' (', columns_query, '_audit_type) VALUES (', values_new_query, 'TG_OP); '';',
 		' END IF;'
 	);
 
 	function_trigger = CONCAT(
 		function_trigger,
-		'SELECT dblink_connect(',
-			'connname,',
-			'''host=127.0.0.1 port=5432 dbname=log user=albert options=-csearch_path=''',
-		');',
-		' SELECT dblink_exec(connname, query_insert);',
-		' SELECT dblink_disconnect(connname); ',
+		' RAISE NOTICE ''Connect: %'', (SELECT dblink_connect(connname, conn_data)); ',
+		' RAISE NOTICE ''Executed: %'', (SELECT dblink_exec(connname, query_insert)); ',
+		' RAISE NOTICE ''Disconnect: %'', (SELECT dblink_disconnect(connname)); ',
 		' RETURN NEW; ',
 		' END; ',
 		' $$ LANGUAGE plpgsql;'
 	);
+	RAISE NOTICE 'Executing: %',  function_trigger;
 	EXECUTE function_trigger;
-	RAISE NOTICE '%',  function_trigger;
+	RAISE NOTICE 'Executing: %',  trigger;
 	EXECUTE trigger;
-	RAISE NOTICE '%',  trigger;
 	RETURN 'Trigger created or updated';
 END
 $func$

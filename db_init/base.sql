@@ -17,9 +17,9 @@ CREATE TABLE "lang" (
 /*
 CREATE EXTENSION dblink;
 SELECT dblink_connect(
-	'audit_db',
+	'audit_db_connection',
 	'host=127.0.0.1 port=5432 dbname=log user=albert password=1234 options=-csearch_path='
 );
-SELECT audit_table_copy('audit_db', 'public', 'lang');
+SELECT audit_table_copy('audit_db_connection', 'public', 'lang');
 SELECT * FROM dblink_disconnect('audit_db');
 */
