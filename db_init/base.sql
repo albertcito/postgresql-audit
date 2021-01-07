@@ -22,4 +22,11 @@ SELECT dblink_connect(
 );
 SELECT audit_table_copy('audit_db_connection', 'public', 'lang');
 SELECT * FROM dblink_disconnect('audit_db');
+SELECT audit_table_triggers('public', 'lang');
+
+INSERT INTO public.lang(
+	id, name, localname, active, is_blocked, created_by, updated_by, type)
+	VALUES ('XX', 'sdasd', 'ee98u3h2i', true, false, 1, 2, 'left');
+
+-- Review log table.
 */
