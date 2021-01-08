@@ -1,11 +1,12 @@
-CREATE OR REPLACE FUNCTION test_audit()
+CREATE OR REPLACE FUNCTION test_audit(
+	conn_data VARCHAR DEFAULT 'host=127.0.0.1 port=5432 dbname=audit user=db_user password=1234 options=-csearch_path='
+)
 	RETURNS VARCHAR
 	AS $func$
 	DECLARE total INT = 0;
 	DECLARE query_verify VARCHAR;
 	DECLARE record RECORD;
 	DECLARE connname VARCHAR = upper(substr(md5(random()::text), 0, 20));
-	DECLARE conn_data VARCHAR = 'host=127.0.0.1 port=5432 dbname=audit user=db_user password=1234 options=-csearch_path=';
 	DECLARE id VARCHAR = upper(substr(md5(random()::text), 0, 5));
 BEGIN
 	RAISE NOTICE 'dblink_connect %', (SELECT dblink_connect(connname, conn_data));

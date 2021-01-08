@@ -17,7 +17,7 @@ VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 - Review the table `audit` DB to see the same value inserted.
 
 ### Run test in the terminal
-Also, you can run the test:
+
 - `docker exec -it postgresql-audit  bash`
 - `psql -U db_user example_db`
 - `SELECT test_audit();`
