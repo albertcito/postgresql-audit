@@ -7,26 +7,9 @@ CREATE TABLE "lang" (
 	"is_blocked" boolean NOT NULL DEFAULT FALSE,
 	"created_by" integer,
 	"updated_by" integer,
-	"created_at" timestamp,
-	"updated_at" timestamp,
+	"created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	"updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	"type" example_enum,
 	CONSTRAINT "UQ_id_lang" UNIQUE ("id"),
 	CONSTRAINT "PK_id_lang" PRIMARY KEY ("id")
 );
-
-/*
-CREATE EXTENSION dblink;
-SELECT dblink_connect(
-	'audit_db_connection',
-	'host=127.0.0.1 port=5432 dbname=log user=albert password=1234 options=-csearch_path='
-);
-SELECT audit_table_copy('audit_db_connection', 'public', 'lang');
-SELECT * FROM dblink_disconnect('audit_db');
-SELECT audit_table_triggers('public', 'lang');
-
-INSERT INTO public.lang(
-	id, name, localname, active, is_blocked, created_by, updated_by, type)
-	VALUES ('XX', 'sdasd', 'ee98u3h2i', true, false, 1, 2, 'left');
-
--- Review log table.
-*/
