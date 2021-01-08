@@ -1,30 +1,44 @@
-## Install
+## Install to dev
 
 - Run `docker-compose up -d`.
 
-## Use
+### Review it in develop mode
 
-The functions create a new table in other DB to save the values inserted, updated or delete from the original table. In order to make it work you must run this script:
-
+- Run this query function to create a copy of the `public.lang` table in `audit` db
+``` sql
+SELECT test_audit()
+```
+- Insert data in lang table
 ```sql
-CREATE EXTENSION dblink;
-SELECT dblink_connect(
-	'audit_db_connection',
-	'host=127.0.0.1 port=5432 dbname=audit user=albertcito password=1234 options=-csearch_path='
-);
-SELECT audit_table(
-	'audit_db_connection',
-	'host=127.0.0.1 port=5432 dbname=audit user=albertcito password=1234 options=-csearch_path=',
-	'public',
-	'lang'
-);
-SELECT dblink_disconnect('audit_db_connection');
-
 INSERT INTO public.lang(id, name, localname, active, is_blocked, created_by, updated_by, type)
 VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 ```
 
-And review the `audit` table to see the inserted the same value.
+- Review the table `audit` DB to see the same value inserted.
+
+## Use in prod
+
+The functions create a new table in other DB to save the values inserted, updated or delete from the original table.
+
+In order to make it work you must do:
+
+1. Copy audit_get_table_columns to the `audit` DB
+
+2. Run this code
+```sql
+CREATE EXTENSION dblink;
+SELECT dblink_connect(
+	'audit_db_connection',
+	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path='
+);
+SELECT audit_table(
+	'audit_db_connection',
+	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=',
+	'public',
+	'lang'
+);
+SELECT dblink_disconnect('audit_db_connection');
+```
 
 ## Functions
 
@@ -32,7 +46,7 @@ And review the `audit` table to see the inserted the same value.
 
 `audit_table(connname VARCHAR, conn_data VARCHAR, name_schema VARCHAR, name_table VARCHAR)`
 - `connname`: Connection name from a dblink_connect.
-- `conn_data`: The connection data to use in trigger. i.e: `host=127.0.0.1 port=5432 dbname=audit user=albert password=1234 options=-csearch_path=`.
+- `conn_data`: The connection data to use in trigger. i.e: `host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=`.
 - `name_schema`: Name schema to audit.
 - `name_table`: Name table to audit.
 
@@ -50,9 +64,16 @@ This function create a new table in the `audit` data base (or the db name choose
 ### audit_table_triggers
 
 `audit_table_triggers(conn_data VARCHAR, name_schema VARCHAR, name_table VARCHAR )`
-- `conn_data`: The connection data to use in trigger. i.e: `host=127.0.0.1 port=5432 dbname=audit user=albert password=1234 options=-csearch_path=`.
+- `conn_data`: The connection data to use in trigger. i.e: `host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=`.
 - `name_schema`: Name schema to audit.
 - `name_table`: Name table to audit.
 
 This function created a trigger in the original table that is executed on Insert, Update or Delete and create a new row in the `audit` table.
+
+### audit_get_table_columns
+`audit_get_table_columns( name_schema varchar, name_table varchar)`
+- `name_schema`: Name schema.
+- `name_table`: Name table.
+
+Function returns a table with the columns and type data of the table requested.
 
