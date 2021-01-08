@@ -1,4 +1,5 @@
 CREATE OR REPLACE FUNCTION audit_table_triggers(
+	conn_data VARCHAR,
     name_schema VARCHAR,
     name_table VARCHAR
 )
@@ -28,9 +29,9 @@ BEGIN
 		' ', function_name, ' ',
         ' RETURNS trigger as $$ ',
 		' DECLARE connname VARCHAR = upper(substr(md5(random()::text), 0, 20));',
+		' DECLARE conn_data VARCHAR = ''',conn_data,''';',
 		' DECLARE query_format VARCHAR;',
 		' DECLARE query_insert VARCHAR;',
-		' DECLARE conn_data VARCHAR = ''host=127.0.0.1 port=5432 dbname=log user=albert options=-csearch_path='';',
 		'BEGIN'
 	);
 
@@ -45,9 +46,9 @@ BEGIN
 		function_trigger,
 		' query_format = '' INSERT INTO ', table_schema_name, ' (', columns_query, '_audit_type) VALUES (', values_format, ' ''''%s''''); '';',
 		' IF TG_OP = ''DELETE'' THEN ',
-			'query_insert = FORMAT(query_format, ', values_old_query, ' TG_OP', ');',
+			'query_insert = FORMAT(query_format, ', values_old_query, ' TG_OP);',
 		' ELSE ',
-			'query_insert = FORMAT(query_format, ', values_new_query, ' TG_OP', ');',
+			'query_insert = FORMAT(query_format, ', values_new_query, ' TG_OP);',
 		' END IF;'
 	);
 
