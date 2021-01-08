@@ -7,7 +7,7 @@ services:
     volumes:
       - ./db_init:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: db_user
       POSTGRES_DB: example_db
       POSTGRES_PASSWORD: 1234
     ports:

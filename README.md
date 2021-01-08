@@ -2,7 +2,7 @@
 
 - Run `docker-compose up -d`.
 
-### Review it in develop mode
+### Review it in PgAdmin
 
 - Run this query function to create a copy of the `public.lang` table in `audit` db
 ``` sql
@@ -15,6 +15,12 @@ VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 ```
 
 - Review the table `audit` DB to see the same value inserted.
+
+### Run test in the terminal
+Also, you can run the test:
+- `docker exec -it postgresql-audit  bash`
+- `psql -U db_user example_db`
+- `SELECT test_audit();`
 
 ## Use in prod
 
