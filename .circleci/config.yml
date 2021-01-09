@@ -29,14 +29,6 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\! ls"
-      - run: |
-        psql \
-        -d $TEST_DATABASE_URL \
-        -c "\! pwd"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
           -c "CREATE TABLE test (name char(25));"
       - run: |
           psql \
@@ -46,3 +38,11 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "SELECT * from test"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\! ls"
+      - run: |
+        psql \
+        -d $TEST_DATABASE_URL \
+        -c "\! pwd"
