@@ -46,3 +46,11 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "\! pwd"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_get_table_columns.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "SELECT * from audit_get_table_columns('public','test')"
