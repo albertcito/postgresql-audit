@@ -28,9 +28,11 @@ jobs:
           ls
           pwd
       -run: |
-        psql \! pwd
+        psql \
+          -c "\! pwd"
       -run: |
-        psql \! ls
+        psql \
+          -c "\! ls"
       -run: |
           psql \
             -d $TEST_DATABASE_URL \
