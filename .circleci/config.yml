@@ -24,28 +24,25 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install postgresql-client-9.6
       - run: whoami
+      - run: ls
+      - run: pwd
       - run: |
-          ls
-          pwd
-      -run: |
-        psql \
-          -c "\! pwd"
-      -run: |
-        psql \
+          psql \
+          -d $TEST_DATABASE_URL \
           -c "\! ls"
-      -run: |
-          psql \
-            -d $TEST_DATABASE_URL \
-            -c "CREATE DATABASE audit;"
-          psql \
-            -d $TEST_DATABASE_URL \
-            -c "CREATE EXTENSION dblink;"
-          psql \
-            -d $TEST_DATABASE_URL \
-            -c "CREATE TYPE example_enum AS ENUM('left', 'right');"
+      - run: |
+        psql \
+        -d $TEST_DATABASE_URL \
+        -c "\! pwd"
+      - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "CREATE TABLE "lang" ( "id" varchar NOT NULL, "name" varchar NOT NULL, "localname" varchar NOT NULL, "active" boolean NOT NULL DEFAULT FALSE, "is_blocked" boolean NOT NULL DEFAULT FALSE, "created_by" integer, "updated_by" integer, "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "type" example_enum, CONSTRAINT "UQ_id_lang" UNIQUE ("id"), CONSTRAINT "PK_id_lang" PRIMARY KEY ("id") );"
+          -c "CREATE TABLE test (name char(25));"
+      - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "SELECT test_audit();"
+          -c "INSERT INTO test VALUES ('John'), ('Joanna'), ('Jennifer');"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "SELECT * from test"
