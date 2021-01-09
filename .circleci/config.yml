@@ -25,6 +25,8 @@ jobs:
       - run: sudo apt-get install postgresql-client-9.6
       - run: whoami
       - run: |
+          ls
+          pwd
           psql \
             -d $TEST_DATABASE_URL \
             -c "CREATE DATABASE audit;"
@@ -37,7 +39,6 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "CREATE TABLE "lang" ( "id" varchar NOT NULL, "name" varchar NOT NULL, "localname" varchar NOT NULL, "active" boolean NOT NULL DEFAULT FALSE, "is_blocked" boolean NOT NULL DEFAULT FALSE, "created_by" integer, "updated_by" integer, "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "type" example_enum, CONSTRAINT "UQ_id_lang" UNIQUE ("id"), CONSTRAINT "PK_id_lang" PRIMARY KEY ("id") );"
-      - run: |
           psql \
           -d $TEST_DATABASE_URL \
           -c "SELECT test_audit();"
