@@ -19,7 +19,6 @@ jobs:
           username: mydockerhub-user
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
-          POSTGRES_USER: db_user
           POSTGRES_DB: example_db
 
     steps:
