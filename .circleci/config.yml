@@ -1,26 +1,27 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
-version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/postgres:9.6-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+        environment:
+          POSTGRES_USER: db_user
+          POSTGRES_DB: example_db
+          POSTGRES_PASSWORD: 1234
+
+    steps:
+      - checkout
+      - run:
+          name: Test number 2 -> ?
+          command: |
+            psql \
+            -d $TEST_DATABASE_URL \
+            -c "CREATE DATABASE audit;"
+            -c "SELECT test_audit();"
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  version: 2
+  build-deploy:
     jobs:
-      build:
-        - image: circleci/postgres:9.6-alpine
-          auth:
-            username: mydockerhub-user
-            password: $DOCKERHUB_PASSWORD
-          environment:
-            POSTGRES_USER: db_user
-            POSTGRES_DB: example_db
-      steps:
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "CREATE DATABASE audit;"
-          -c "SELECT test_audit();"
+      - build
