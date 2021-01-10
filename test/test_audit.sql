@@ -8,18 +8,21 @@ CREATE OR REPLACE FUNCTION test_audit(
 	DECLARE record RECORD;
 	DECLARE connname VARCHAR = upper(substr(md5(random()::text), 0, 20));
 	DECLARE id VARCHAR = upper(substr(md5(random()::text), 0, 5));
+	DECLARE id_add_column VARCHAR = upper(substr(md5(random()::text), 0, 5));
 BEGIN
 	RAISE NOTICE 'dblink_connect %', (SELECT dblink_connect(connname, conn_data));
 	RAISE NOTICE 'copy_fn_to_audit %', (SELECT copy_fn_to_audit(connname));
-	RAISE NOTICE 'audit_table %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
 
+	-- Verify the same value in `audit` table -> DB link
+	RAISE NOTICE 'audit_table %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
 	INSERT INTO public.lang(id, name, localname, active, is_blocked, created_by, updated_by, type)
 	VALUES (id, 'inEnglish', 'inOriginal', true, false, 1, 2, 'left');
 
-	-- Verify the same value in `audit` table -> DB link
 	query_verify = FORMAT('SELECT COUNT(lang.id) as total FROM public.lang WHERE id = ''%s'';', id);
 	RAISE NOTICE 'Verify query in audit %', query_verify;
+
 	SELECT remote.total INTO total FROM dblink(connname, query_verify) AS remote(total int);
+
 	if (total > 0) THEN
 		RAISE INFO 'Verification success';
 	ELSE
@@ -27,6 +30,24 @@ BEGIN
 		USING ERRCODE='AUTNF';
 	END IF;
 
+	-- Verify new column
+	ALTER TABLE public.lang ADD COLUMN IF NOT EXISTS new_column INT;
+	RAISE NOTICE 'audit_table -> new column %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
+	INSERT INTO
+		public.lang(id, name, localname, active, is_blocked, created_by, updated_by, type, new_column)
+		VALUES (id_add_column, 'inEnglish', 'inOriginal', true, false, 1, 2, 'left', 10);
+
+	query_verify = FORMAT('SELECT COUNT(lang.new_column) as total FROM public.lang WHERE id = ''%s'';', id_add_column);
+	RAISE NOTICE 'Verify query in audit %', query_verify;
+	SELECT remote2.total INTO total FROM dblink(connname, query_verify) AS remote2(total int);
+	if (total > 0) THEN
+		RAISE INFO 'Verification new columun success';
+	ELSE
+		RAISE EXCEPTION 'The id "%" does not exists in "%.%" table ', id, name_schema, name_table
+		USING ERRCODE='AUTNF';
+	END IF;
+
+	-- Disconnect
 	RAISE NOTICE 'dblink_disconnect %',(SELECT dblink_disconnect(connname));
 	RETURN 'Test passed';
 END

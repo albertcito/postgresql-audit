@@ -1,4 +1,4 @@
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Cool Postgres DB Audit repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Cool%20Postgres%20DB%20Audit%20repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit%2F&hashtags=postgres)
 
 
 ## Install to dev
