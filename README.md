@@ -1,4 +1,4 @@
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Cool Postgres DB Audit repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit)
 
 
 ## Install to dev
@@ -6,7 +6,6 @@
 - Run `docker-compose up -d`.
 
 ### Review it in PgAdmin
-- Copy [audit_get_table_columns](db_init/audit_get_table_columns.sql) to `audit` table.
 - Run this query function to create a copy of the `public.lang` table in `audit` db
 ``` sql
 SELECT test_audit()
@@ -22,13 +21,9 @@ VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 ### Run test in the terminal
 
 - `docker exec -it postgresql-audit  bash`
-Copy [audit_get_table_columns](db_init/audit_get_table_columns.sql) to `audit` table
-- `pg_dump -U db_user -Fc -s -f dump_test example_db`
-- `pg_restore -l dump_test | grep audit_get_table_columns > function_list`
-- `pg_restore -U db_user -d audit -L function_list dump_test`
 Connect and test it
-- `psql -U db_user example_db`
-- `SELECT test_audit();`
+	- `psql -U db_user example_db`
+	- `SELECT test_audit();`
 
 ## Use in prod
 

@@ -64,11 +64,11 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i db_init/copy_fn_to_audit.sql;"
+          -c "\i test/copy_fn_to_audit.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i db_init/test_audit.sql;"
+          -c "\i test/test_audit.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
