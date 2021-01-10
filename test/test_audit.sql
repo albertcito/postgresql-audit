@@ -10,6 +10,7 @@ CREATE OR REPLACE FUNCTION test_audit(
 	DECLARE id VARCHAR = upper(substr(md5(random()::text), 0, 5));
 BEGIN
 	RAISE NOTICE 'dblink_connect %', (SELECT dblink_connect(connname, conn_data));
+	RAISE NOTICE 'copy_fn_to_audit %', (SELECT copy_fn_to_audit(connname));
 	RAISE NOTICE 'audit_table %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
 
 	INSERT INTO public.lang(id, name, localname, active, is_blocked, created_by, updated_by, type)
