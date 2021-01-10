@@ -39,6 +39,14 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_column_to_query.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_column_added.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table_copy.sql;"
       - run: |
           psql \
