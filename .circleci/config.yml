@@ -31,10 +31,6 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "CREATE DATABASE audit;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_get_table_columns.sql;"
       - run: |
           psql \
@@ -56,10 +52,19 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table.sql;"
+      ## Start testing
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "CREATE DATABASE audit;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
           -c "\i db_init/base.sql;"
+      ## Copy audit_get_table_columns to audit table
+      - run: pg_dump -U db_user -Fc -s -f dump_test example_db
+      - run: pg_restore -l dump_test | grep audit_get_table_columns > function_list
+      - run: pg_restore -U db_user -d audit -L function_list dump_test
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
