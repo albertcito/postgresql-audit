@@ -31,11 +31,15 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "CREATE DATABASE audit;"
+          -c "\i db_init/audit_get_table_columns.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i db_init/audit_get_table_columns.sql;"
+          -c "\i db_init/audit_column_to_query.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_column_added.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
@@ -48,14 +52,23 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table.sql;"
+      ## Start testing
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i db_init/base.sql;"
+          -c "CREATE DATABASE audit;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i db_init/test_audit.sql;"
+          -c "\i test/base.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/copy_fn_to_audit.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/test_audit.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \

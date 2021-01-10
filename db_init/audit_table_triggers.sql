@@ -54,10 +54,10 @@ BEGIN
 
 	function_trigger = CONCAT(
 		function_trigger,
-		' RAISE NOTICE ''Connect: %'', (SELECT dblink_connect(connname, conn_data)); ',
-		' RAISE NOTICE ''Executing: %'', query_insert; ',
-		' RAISE NOTICE ''Executed: %'', (SELECT dblink_exec(connname, query_insert)); ',
-		' RAISE NOTICE ''Disconnect: %'', (SELECT dblink_disconnect(connname)); ',
+		' RAISE NOTICE ''Audit -> Connect: %'', (SELECT dblink_connect(connname, conn_data)); ',
+		' RAISE NOTICE ''Audit -> Executing: %'', query_insert; ',
+		' RAISE NOTICE ''Audit -> Executed: %'', (SELECT dblink_exec(connname, query_insert)); ',
+		' RAISE NOTICE ''Audit -> Disconnect: %'', (SELECT dblink_disconnect(connname)); ',
 		' RETURN NEW; ',
 		' END; ',
 		' $$ LANGUAGE plpgsql;'

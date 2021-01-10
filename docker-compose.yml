@@ -5,7 +5,18 @@ services:
     container_name: postgresql-audit
     image: postgres
     volumes:
-      - ./db_init:/docker-entrypoint-initdb.d
+      ## Audit Function
+      - ./db_init/audit_column_to_query.sql:/docker-entrypoint-initdb.d/audit_column_to_query.sql
+      - ./db_init/audit_get_table_columns.sql:/docker-entrypoint-initdb.d/audit_get_table_columns.sql
+      - ./db_init/audit_table_column_added.sql:/docker-entrypoint-initdb.d/audit_table_column_added.sql
+      - ./db_init/audit_table_copy.sql:/docker-entrypoint-initdb.d/audit_table_copy.sql
+      - ./db_init/audit_table_triggers.sql:/docker-entrypoint-initdb.d/audit_table_triggers.sql
+      - ./db_init/audit_table.sql:/docker-entrypoint-initdb.d/audit_table.sql
+      ## Test Data
+      - ./test/create_db_audit.sql:/docker-entrypoint-initdb.d/create_db_audit.sql
+      - ./test/base.sql:/docker-entrypoint-initdb.d/base.sql
+      - ./test/copy_fn_to_audit.sql:/docker-entrypoint-initdb.d/copy_fn_to_audit.sql
+      - ./test/test_audit.sql:/docker-entrypoint-initdb.d/test_audit.sql
     environment:
       POSTGRES_USER: db_user
       POSTGRES_DB: example_db

@@ -1,4 +1,4 @@
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Cool%20Postgres%20DB%20Audit%20repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit%2F&hashtags=postgres)
 
 
 ## Install to dev
@@ -6,7 +6,6 @@
 - Run `docker-compose up -d`.
 
 ### Review it in PgAdmin
-
 - Run this query function to create a copy of the `public.lang` table in `audit` db
 ``` sql
 SELECT test_audit()
@@ -22,8 +21,9 @@ VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 ### Run test in the terminal
 
 - `docker exec -it postgresql-audit  bash`
-- `psql -U db_user example_db`
-- `SELECT test_audit();`
+Connect and test it
+	- `psql -U db_user example_db`
+	- `SELECT test_audit();`
 
 ## Use in prod
 
