@@ -54,7 +54,7 @@ jobs:
           -c "\i db_init/audit_table.sql;"
       ## Start testing
       - run: |
-        psql \
+          psql \
           -d $TEST_DATABASE_URL \
           -c "CREATE DATABASE audit;"
       - run: |
