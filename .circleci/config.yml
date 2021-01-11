@@ -8,6 +8,14 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           TEST_DATABASE_URL: postgresql://db_user@localhost/example_db
+      - image: circleci/postgres:9.6.5-alpine-ram
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          POSTGRES_USER: db_user
+          POSTGRES_DB: example_db
+          POSTGRES_PASSWORD: 1234
     steps:
       - checkout
       - run: sudo apt-get update
@@ -42,14 +50,6 @@ jobs:
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table.sql;"
     test:
-      - image: circleci/postgres:9.6.5-alpine-ram
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-        environment:
-          POSTGRES_USER: db_user
-          POSTGRES_DB: example_db
-          POSTGRES_PASSWORD: 1234
         steps:
           - run: |
               psql \
