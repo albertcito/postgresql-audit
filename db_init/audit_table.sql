@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION audit_table(
 	RETURNS VARCHAR
 	AS $func$
 BEGIN
-	CREATE SCHEMA IF NOT EXISTS name_schema;
+	EXECUTE FORMAT('CREATE SCHEMA IF NOT EXISTS %I;', name_schema);
 	RAISE NOTICE '---------------- audit_table_copy ------------------------';
 	RAISE NOTICE '%', (SELECT audit_table_copy(connname, name_schema, name_table));
 	RAISE NOTICE '---------------- audit_table_column_added ------------------------';

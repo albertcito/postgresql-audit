@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION audit_run_tests(
+CREATE OR REPLACE FUNCTION test_table(
     conn_data VARCHAR DEFAULT 'host=127.0.0.1 port=5432 dbname=audit user=db_user password=1234 options=-csearch_path='
 )
 	RETURNS VARCHAR

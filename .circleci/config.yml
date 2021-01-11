@@ -84,8 +84,8 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i test/audit_run_tests.sql;"
+          -c "\i test/test_table.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "SELECT audit_run_tests();"
+          -c "SELECT test_table();"
