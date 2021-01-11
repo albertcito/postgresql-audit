@@ -1,9 +1,6 @@
 version: 2
 jobs:
   build:
-
-    # Primary container image where all commands run
-
     docker:
       - image: circleci/python:3.6.2-stretch-browsers
         auth:
@@ -11,18 +8,6 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           TEST_DATABASE_URL: postgresql://db_user@localhost/example_db
-
-    # Service container image
-
-      - image: circleci/postgres:9.6.5-alpine-ram
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-        environment:
-          POSTGRES_USER: db_user
-          POSTGRES_DB: example_db
-          POSTGRES_PASSWORD: 1234
-
     steps:
       - checkout
       - run: sudo apt-get update
@@ -45,7 +30,7 @@ jobs:
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table_column_updated.sql;"
       - run: |
-          psql \
+         psql \
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table_copy.sql;"
       - run: |
@@ -56,36 +41,53 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table.sql;"
-      ## Start testing
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "CREATE DATABASE audit;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "\i test/base.sql;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "\i test/copy_fn_to_audit.sql;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "\i test/test_add_column.sql;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "\i test/test_alter_column.sql;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "\i test/test_audit_insert.sql;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "\i test/test_table.sql;"
-      - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "SELECT test_table();"
+    test:
+      - image: circleci/postgres:9.6.5-alpine-ram
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          POSTGRES_USER: db_user
+          POSTGRES_DB: example_db
+          POSTGRES_PASSWORD: 1234
+        steps:
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "CREATE DATABASE audit;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "\i test/base.sql;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "\i test/copy_fn_to_audit.sql;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "\i test/test_add_column.sql;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "\i test/test_alter_column.sql;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "\i test/test_audit_insert.sql;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "\i test/test_table.sql;"
+          - run: |
+              psql \
+              -d $TEST_DATABASE_URL \
+              -c "SELECT test_table();"
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
