@@ -22,7 +22,9 @@ services:
       - ./test/test_add_column.sql:/docker-entrypoint-initdb.d/test_add_column.sql
       - ./test/test_alter_column.sql:/docker-entrypoint-initdb.d/test_alter_column.sql
       - ./test/test_audit_insert.sql:/docker-entrypoint-initdb.d/test_audit_insert.sql
-      - ./test/test_table.sql:/docker-entrypoint-initdb.d/test_table.sql
+      - ./test/test_audit_table.sql:/docker-entrypoint-initdb.d/test_audit_table.sql
+      - ./test/test_audit_schema.sql:/docker-entrypoint-initdb.d/test_audit_schema.sql
+      - ./test/test_audit_db.sql:/docker-entrypoint-initdb.d/test_audit_db.sql
     environment:
       POSTGRES_USER: db_user
       POSTGRES_DB: example_db

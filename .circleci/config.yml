@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  test_table_db:
+  test_audit_table:
     docker:
       - image: circleci/python:3.6.2-stretch-browsers
         auth:
@@ -49,7 +49,7 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "\i db_init/audit_table.sql;"
-      ## Test start
+      ## Table Test
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
@@ -82,8 +82,152 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "SELECT test_table();"
+
+  test_audit_schema:
+    docker:
+      - image: circleci/python:3.6.2-stretch-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          TEST_DATABASE_URL: postgresql://db_user@localhost/example_db
+      - image: circleci/postgres:9.6.5-alpine-ram
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          POSTGRES_USER: db_user
+          POSTGRES_DB: example_db
+          POSTGRES_PASSWORD: 1234
+    steps:
+      - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client-9.6
+      - run: whoami
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_get_table_columns.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_column_to_query.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_column_added.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_column_updated.sql;"
+      - run: |
+         psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_copy.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_triggers.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table.sql;"
+      ## Schema Test
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "CREATE DATABASE audit;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/base.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/copy_fn_to_audit.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/test_audit_schema.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "SELECT test_audit_schema();"
+
+  test_audit_db:
+    docker:
+      - image: circleci/python:3.6.2-stretch-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          TEST_DATABASE_URL: postgresql://db_user@localhost/example_db
+      - image: circleci/postgres:9.6.5-alpine-ram
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          POSTGRES_USER: db_user
+          POSTGRES_DB: example_db
+          POSTGRES_PASSWORD: 1234
+    steps:
+      - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client-9.6
+      - run: whoami
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_get_table_columns.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_column_to_query.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_column_added.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_column_updated.sql;"
+      - run: |
+         psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_copy.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table_triggers.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i db_init/audit_table.sql;"
+      ## DB Test
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "CREATE DATABASE audit;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/base.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/copy_fn_to_audit.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/test_audit_db.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "SELECT test_audit_db();"
 workflows:
   version: 2
   list_tests:
     jobs:
-      - test_table_db
+      - test_audit_table
+      - test_audit_schema
+      - test_audit_db
