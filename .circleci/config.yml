@@ -72,8 +72,20 @@ jobs:
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "\i test/test_audit.sql;"
+          -c "\i test/test_add_column.sql;"
       - run: |
           psql \
           -d $TEST_DATABASE_URL \
-          -c "SELECT test_audit();"
+          -c "\i test/test_alter_column.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/test_audit_insert.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "\i test/audit_run_tests.sql;"
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "SELECT audit_run_tests();"

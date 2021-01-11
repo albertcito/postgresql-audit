@@ -7,7 +7,7 @@
 ### Review it in PgAdmin
 - Run this query function to create a copy of the `public.lang` table in `audit` db
 ``` sql
-SELECT test_audit()
+SELECT audit_run_tests()
 ```
 - Insert data in lang table
 ```sql
@@ -22,7 +22,7 @@ VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 - `docker exec -it postgresql-audit  bash`
 Connect and test it
 	- `psql -U db_user example_db`
-	- `SELECT test_audit();`
+	- `SELECT audit_run_tests();`
 
 ## Use in prod
 
