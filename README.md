@@ -1,5 +1,4 @@
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Cool%20Postgres%20DB%20Audit%20repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit%2F&hashtags=postgres)
-
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) ![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https://twitter.com/intent/tweet?text=Cool%20Postgres%20DB%20Audit%20repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit%2F&hashtags=postgres)
 
 ## Install to dev
 
@@ -31,7 +30,7 @@ The functions create a new table in other DB to save the values inserted, update
 
 In order to make it work you must do:
 
-1. Copy audit_get_table_columns to the `audit` DB
+1. Copy [audit_get_table_columns](db_init/audit_column_to_query.sql) to your `audit` DB.
 
 2. Run this code
 ```sql

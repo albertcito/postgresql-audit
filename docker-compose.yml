@@ -9,6 +9,7 @@ services:
       - ./db_init/audit_column_to_query.sql:/docker-entrypoint-initdb.d/audit_column_to_query.sql
       - ./db_init/audit_get_table_columns.sql:/docker-entrypoint-initdb.d/audit_get_table_columns.sql
       - ./db_init/audit_table_column_added.sql:/docker-entrypoint-initdb.d/audit_table_column_added.sql
+      - ./db_init/audit_table_column_updated.sql:/docker-entrypoint-initdb.d/audit_table_column_updated.sql
       - ./db_init/audit_table_copy.sql:/docker-entrypoint-initdb.d/audit_table_copy.sql
       - ./db_init/audit_table_triggers.sql:/docker-entrypoint-initdb.d/audit_table_triggers.sql
       - ./db_init/audit_table.sql:/docker-entrypoint-initdb.d/audit_table.sql
