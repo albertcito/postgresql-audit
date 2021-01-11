@@ -9,6 +9,7 @@ CREATE OR REPLACE FUNCTION test_audit(
 	DECLARE connname VARCHAR = upper(substr(md5(random()::text), 0, 20));
 	DECLARE id VARCHAR = upper(substr(md5(random()::text), 0, 5));
 	DECLARE id_add_column VARCHAR = upper(substr(md5(random()::text), 0, 5));
+	DECLARE id_update_column VARCHAR = upper(substr(md5(random()::text), 0, 5));
 BEGIN
 	RAISE NOTICE 'dblink_connect %', (SELECT dblink_connect(connname, conn_data));
 	RAISE NOTICE 'copy_fn_to_audit %', (SELECT copy_fn_to_audit(connname));
@@ -39,7 +40,28 @@ BEGIN
 
 	query_verify = FORMAT('SELECT COUNT(lang.new_column) as total FROM public.lang WHERE id = ''%s'';', id_add_column);
 	RAISE NOTICE 'Verify query in audit %', query_verify;
+	total = 0;
 	SELECT remote2.total INTO total FROM dblink(connname, query_verify) AS remote2(total int);
+	if (total > 0) THEN
+		RAISE INFO 'Verification new columun success';
+	ELSE
+		RAISE EXCEPTION 'The id "%" does not exists in "%.%" table ', id, name_schema, name_table
+		USING ERRCODE='AUTNF';
+	END IF;
+
+	--
+	ALTER TABLE public.lang
+		ALTER COLUMN id TYPE text,
+		ALTER COLUMN created_by TYPE int4,
+		ALTER COLUMN type TYPE  VARCHAR;
+	RAISE NOTICE 'audit_table -> new column %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
+	INSERT INTO
+		public.lang(id, name, localname, active, is_blocked, created_by, updated_by, type, new_column)
+		VALUES (id_update_column, 'inEnglish', 'inOriginal', true, false, 1, 2, 'left', 10);
+	query_verify = FORMAT('SELECT COUNT(lang.new_column) as total FROM public.lang WHERE id = ''%s'';', id_update_column);
+	RAISE NOTICE 'Verify query in audit %', query_verify;
+	total = 0;
+	SELECT remote3.total INTO total FROM dblink(connname, query_verify) AS remote3(total int);
 	if (total > 0) THEN
 		RAISE INFO 'Verification new columun success';
 	ELSE
