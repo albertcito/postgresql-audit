@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION test_audit(
 	DECLARE query_verify VARCHAR;
 	DECLARE record RECORD;
 	DECLARE connname VARCHAR = upper(substr(md5(random()::text), 0, 20));
+	DECLARE name_schema VARCHAR = 'public';
 	DECLARE id VARCHAR = upper(substr(md5(random()::text), 0, 5));
 	DECLARE id_add_column VARCHAR = upper(substr(md5(random()::text), 0, 5));
 	DECLARE id_update_column VARCHAR = upper(substr(md5(random()::text), 0, 5));
@@ -14,8 +15,8 @@ BEGIN
 	RAISE NOTICE 'dblink_connect %', (SELECT dblink_connect(connname, conn_data));
 	RAISE NOTICE 'copy_fn_to_audit %', (SELECT copy_fn_to_audit(connname));
 
-	-- Verify the same value in `audit` table -> DB link
-	RAISE NOTICE 'audit_table %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
+	RAISE NOTICE '----------------> verify audit_table <------------------------';
+	RAISE NOTICE 'audit_table %', (SELECT audit_table(connname, conn_data, name_schema, 'lang'));
 	INSERT INTO public.lang(id, name, localname, active, is_blocked, created_by, updated_by, type)
 	VALUES (id, 'inEnglish', 'inOriginal', true, false, 1, 2, 'left');
 
@@ -31,7 +32,7 @@ BEGIN
 		USING ERRCODE='AUTNF';
 	END IF;
 
-	-- Verify new column
+	RAISE NOTICE '----------------> verify new column <------------------------';
 	ALTER TABLE public.lang ADD COLUMN IF NOT EXISTS new_column INT;
 	RAISE NOTICE 'audit_table -> new column %', (SELECT audit_table(connname, conn_data, 'public', 'lang'));
 	INSERT INTO
@@ -49,7 +50,7 @@ BEGIN
 		USING ERRCODE='AUTNF';
 	END IF;
 
-	--
+	RAISE NOTICE '----------------> verify alter columns <------------------------';
 	ALTER TABLE public.lang
 		ALTER COLUMN id TYPE text,
 		ALTER COLUMN created_by TYPE int4,

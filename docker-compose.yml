@@ -13,6 +13,8 @@ services:
       - ./db_init/audit_table_copy.sql:/docker-entrypoint-initdb.d/audit_table_copy.sql
       - ./db_init/audit_table_triggers.sql:/docker-entrypoint-initdb.d/audit_table_triggers.sql
       - ./db_init/audit_table.sql:/docker-entrypoint-initdb.d/audit_table.sql
+      - ./db_init/audit_schema.sql:/docker-entrypoint-initdb.d/audit_schema.sql
+      - ./db_init/audit_db.sql:/docker-entrypoint-initdb.d/audit_db.sql
       ## Test Data
       - ./test/create_db_audit.sql:/docker-entrypoint-initdb.d/create_db_audit.sql
       - ./test/base.sql:/docker-entrypoint-initdb.d/base.sql
