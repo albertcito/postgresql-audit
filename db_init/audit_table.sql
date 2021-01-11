@@ -16,7 +16,7 @@ BEGIN
 	RAISE NOTICE '%', (SELECT audit_table_column_updated(connname, name_schema, name_table));
 	RAISE NOTICE '---------------- audit_table_triggers ------------------------';
 	RAISE NOTICE '%', (SELECT audit_table_triggers(conn_data, name_schema, name_table));
-	RETURN 'Audit Table done';
+	RETURN 'audit_table done';
 END
 $func$
 LANGUAGE plpgsql;

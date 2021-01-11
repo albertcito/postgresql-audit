@@ -15,7 +15,7 @@ BEGIN
 			connname, conn_data, CAST(record.schema_name AS VARCHAR)
 		));
 	END LOOP;
-	RETURN 'Audit Schema done';
+	RETURN 'audit_db done';
 END
 $func$
 LANGUAGE plpgsql;

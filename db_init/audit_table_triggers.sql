@@ -66,7 +66,7 @@ BEGIN
 	EXECUTE function_trigger;
 	RAISE NOTICE 'Executing: %',  trigger;
 	EXECUTE trigger;
-	RETURN 'Trigger created or updated';
+	RETURN 'audit_table_triggers done';
 END
 $func$
 LANGUAGE plpgsql;
