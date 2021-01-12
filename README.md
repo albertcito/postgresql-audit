@@ -29,7 +29,7 @@ SELECT dblink_disconnect('audit_db_connection');
 ```
 4. Review your audit DB you will have the same struct of your DB. Insert something in your DB and review it in the audit DB.
 
-## What happens if I update a table or add a new column?
+### What happens if I update a table or add a new column?
 
 You just have to run this function
 ```sql
@@ -38,7 +38,7 @@ SELECT dblink_connect(
 	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path='
 );
 -- Update table triggers and audit table column
-SELECT audit_table_(
+SELECT audit_table(
 	'audit_db_connection',
 	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=',
 	'my_schema',
@@ -53,9 +53,9 @@ If you want to fix something or improve the code. These are the steps to install
 
 - Run `git clone https://github.com/albertcito/postgresql-audit.git`
 - Run `cd postgresql-audit`
-- Run `docker-compose up -d`.
+- Run `docker-compose up -d`
 
-### Review it in PgAdmin
+### Review test it in PgAdmin
 - Run this query function to create a copy of the `public.lang` table in `audit` db
 ``` sql
 SELECT test_table()
