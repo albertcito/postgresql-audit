@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION audit_run_tests(
+CREATE OR REPLACE FUNCTION test_audit_table(
     conn_data VARCHAR DEFAULT 'host=127.0.0.1 port=5432 dbname=audit user=db_user password=1234 options=-csearch_path='
 )
 	RETURNS VARCHAR
@@ -26,7 +26,7 @@ BEGIN
     RAISE NOTICE '%', (SELECT test_alter_column(connname, conn_data));
 
     RAISE NOTICE 'dblink_disconnect %',(SELECT dblink_disconnect(connname));
-	RETURN 'Test passed';
+	RETURN 'Test test_audit_table passed';
 END
 $func$
 LANGUAGE plpgsql;

@@ -1,13 +1,64 @@
 [![CircleCI (all branches)](https://img.shields.io/circleci/project/github/albertcito/postgresql-audit.svg)](https://circleci.com/gh/albertcito/postgresql-audit) [![Twitter](https://img.shields.io/twitter/url?style=social)](https://twitter.com/intent/tweet?text=Cool%20Postgres%20DB%20Audit%20repository&url=https%3A%2F%2Fgithub.com%2Falbertcito%2Fpostgresql-audit%2F&hashtags=postgres)
 
-## Install to dev
 
-- Run `docker-compose up -d`.
+## What is it
 
-### Review it in PgAdmin
+- It create the same schemas and tables in a audit DB.
+- It add triggers in each of the tables to your DB to copy every INSERT, UPDATE or DELETE to the audit DB.
+
+### How to start
+
+1. Copy [audit_get_table_columns](db_init/audit_get_table_columns.sql) in the `public` schema of your `audit` DB.
+
+2. It require dblink extension in order to work, so install it:
+```sql
+CREATE EXTENSION dblink;
+```
+3. Run this code
+```sql
+SELECT dblink_connect(
+	'audit_db_connection',
+	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path='
+);
+-- Copy all your schemas and tables to the audit DB
+SELECT audit_db(
+	'audit_db_connection',
+	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path='
+);
+SELECT dblink_disconnect('audit_db_connection');
+```
+4. Review your audit DB you will have the same struct of your DB. Insert something in your DB and review it in the audit DB.
+
+### What happens if I update a table or add a new column?
+
+You just have to run this function
+```sql
+SELECT dblink_connect(
+	'audit_db_connection',
+	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path='
+);
+-- Update table triggers and audit table column
+SELECT audit_table(
+	'audit_db_connection',
+	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=',
+	'my_schema',
+	'my_table'
+);
+SELECT dblink_disconnect('audit_db_connection');
+```
+
+## Open a new issue
+
+If you want to fix something or improve the code. These are the steps to install it in dev env.
+
+- Run `git clone https://github.com/albertcito/postgresql-audit.git`
+- Run `cd postgresql-audit`
+- Run `docker-compose up -d`
+
+### Review test it in PgAdmin
 - Run this query function to create a copy of the `public.lang` table in `audit` db
 ``` sql
-SELECT audit_run_tests()
+SELECT test_table()
 ```
 - Insert data in lang table
 ```sql
@@ -20,68 +71,6 @@ VALUES ('EN', 'English', 'English', true, false, 1, 2, 'left');
 ### Run test in the terminal
 
 - `docker exec -it postgresql-audit  bash`
-Connect and test it
+- Connect and test it
 	- `psql -U db_user example_db`
-	- `SELECT audit_run_tests();`
-
-## Use in prod
-
-The functions create a new table in other DB to save the values inserted, updated or delete from the original table.
-
-In order to make it work you must do:
-
-1. Copy [audit_get_table_columns](db_init/audit_column_to_query.sql) to your `audit` DB.
-
-2. Run this code
-```sql
-CREATE EXTENSION dblink;
-SELECT dblink_connect(
-	'audit_db_connection',
-	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path='
-);
-SELECT audit_table(
-	'audit_db_connection',
-	'host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=',
-	'public',
-	'lang'
-);
-SELECT dblink_disconnect('audit_db_connection');
-```
-
-## Functions
-
-### audit_table
-
-`audit_table(connname VARCHAR, conn_data VARCHAR, name_schema VARCHAR, name_table VARCHAR)`
-- `connname`: Connection name from a dblink_connect.
-- `conn_data`: The connection data to use in trigger. i.e: `host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=`.
-- `name_schema`: Name schema to audit.
-- `name_table`: Name table to audit.
-
-This function create a new table in the `audit` data base (or the db name choose) in the same schema that is the table in the original. Also, it created a trigger in the original table that is executed on Insert, Update or Delete and create a new row in the `audit` table.
-
-### audit_table_copy
-
-`audit_table_copy(connname VARCHAR, name_schema VARCHAR, name_table VARCHAR)`
-- `connname`: Connection name from a dblink_connect.
-- `name_schema`: Name schema to audit.
-- `name_table`: Name table to audit.
-
-This function create a new table in the `audit` data base (or the db name choose) in the same schema that is the table in the original.
-
-### audit_table_triggers
-
-`audit_table_triggers(conn_data VARCHAR, name_schema VARCHAR, name_table VARCHAR )`
-- `conn_data`: The connection data to use in trigger. i.e: `host=127.0.0.1 port=5432 dbname=audit user=root password=1234 options=-csearch_path=`.
-- `name_schema`: Name schema to audit.
-- `name_table`: Name table to audit.
-
-This function created a trigger in the original table that is executed on Insert, Update or Delete and create a new row in the `audit` table.
-
-### audit_get_table_columns
-`audit_get_table_columns( name_schema varchar, name_table varchar)`
-- `name_schema`: Name schema.
-- `name_table`: Name table.
-
-Function returns a table with the columns and type data of the table requested.
-
+	- `SELECT test_table();`
