@@ -8,13 +8,15 @@
 
 ### How to start
 
-1. Copy [audit_get_table_columns](db_init/audit_get_table_columns.sql) in the `public` schema of your `audit` DB.
+1. Copy all functions in `db_init` folder in your current DB.
 
-2. It require dblink extension in order to work, so install it:
+2. Create a `audit` DB and copy [audit_get_table_columns](db_init/audit_get_table_columns.sql) in the `public` schema.
+
+3. It require dblink extension in order to work, so install it:
 ```sql
-CREATE EXTENSION dblink;
+CREATE EXTENSION IF NOT EXISTS dblink;
 ```
-3. Run this code
+4. Run this code. Update the dbname, user, and password (password might not be required).
 ```sql
 SELECT dblink_connect(
 	'audit_db_connection',
