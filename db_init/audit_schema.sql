@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION audit_schema(
 	DECLARE record RECORD;
 BEGIN
 	FOR record IN (
-		SELECT tables.table_name FROM information_schema.tables WHERE table_schema = name_schema
+		SELECT tables.table_name FROM information_schema.tables
+		WHERE table_schema = name_schema AND table_type = 'BASE TABLE'
 	) LOOP
 		RAISE NOTICE '---------------- audit_table: % ------------------------', record.table_name;
 		RAISE NOTICE '%', (SELECT audit_table(
